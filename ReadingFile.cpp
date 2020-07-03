@@ -9,7 +9,6 @@
 
 using namespace std;
 
-
 unsigned char dataStored[3000000];
 
 FILE *logfile1,*logfile2;
@@ -30,12 +29,10 @@ bool openFileToRead(const char fileName[])
     }
 
     return true;
-
 }
 
 void readGlobalHeader()
 {
-
     if (fread(&globhdr, sizeof(globalHeader), 1, logfile1) != 1)
     {
         printf("Could not read GLOBAL HEADER\n");
@@ -44,7 +41,6 @@ void readGlobalHeader()
 }
 bool readPacketHeader()
 {
-    
     if (fread(&pckHdr, sizeof(packetHeader), 1, logfile1) != 1)
     {   
         return false;
@@ -54,7 +50,6 @@ bool readPacketHeader()
 
 void readEthernetHeader(ethernetHeader &ethrHdr)
 {
-   
     if (fread(&ethrHdr, sizeof(ethernetHeader), 1, logfile1) != 1)
     {
         printf("Could not read ETHERNET HEADER\n");
@@ -73,19 +68,35 @@ void copyIp(IPHeader &IPHdr)
     }
 }
 
+void copyIpv6(IPv6Header &IPv6Hdr)
+{
+    for(int i=0;i<4;i++)
+    {
+        sourceIpAddress[numberOfPackets-1][i]      =  IPv6Hdr.sourceIpAddr[i];
+
+        destinationIpAddress[numberOfPackets-1][i] =  IPv6Hdr.destIpAddr[i];
+    }
+}
+
 void readIPHeader(IPHeader &IPHdr)
 {
-    
     if (fread(&IPHdr, sizeof(IPHeader), 1, logfile1) != 1)
     {
         printf("Could not read IP HEADER\n");
         
     }
     copyIp(IPHdr);   
-    
 }
 
-
+void readIPv6Header(IPv6Header &IPv6Hdr)
+{
+    if (fread(&IPv6Hdr, sizeof(IPv6Header), 1, logfile1) != 1)
+    {
+        printf("Could not read IPv6 HEADER\n");
+        
+    }
+    copyIpv6(IPv6Hdr);  
+}
 
 void readTcpHeader(TCPHeader &tcpHdr)
 {
@@ -96,10 +107,6 @@ void readTcpHeader(TCPHeader &tcpHdr)
     }
 }
 
-
-
-
-
 void readArp(ARP &arphdr)
 {
     if (fread(&arphdr, sizeof(ARP), 1, logfile1) != 1)
@@ -107,12 +114,7 @@ void readArp(ARP &arphdr)
         printf("Could not read ARP HEADER\n");
         
     }
-
 }
-
-
-
-
 
 void readUdpHeader(UDPHeader &udpHeader)
 {
@@ -122,22 +124,23 @@ void readUdpHeader(UDPHeader &udpHeader)
         printf("Could not read UDP HEADER\n");
         
     }
-
 }
-
 
 void readDataDump(int y,int z)
 {
-    
+    //printf("\nZ no dump: %d\n", z);
     int x = dataPayload[y]-z;
     unsigned char dataOneByte;
-    
+    //printf("\nX no dump: %d\n", x);
+    //int teste;
+    //scanf("%d", &teste);
+
     for(int i=0;i<x;i++)
     {
 
         if (fread(&dataOneByte, 1, 1, logfile1) != 1)
         {   
-            printf("Could not read DATA\n");  
+            printf("Could not read DATA %d \n",i);  
         }
         
         data[y][i] = dataOneByte;
@@ -151,17 +154,15 @@ void readDataDump(int y,int z)
             readableData [y][i] = (char)'.';
         } 
 
-           
     }
 
 }
 
 void skipPacket(int x)
 {
-     unsigned char dataOneByte;
-     for(int i=0;i<x;i++)
-     {
-
+    unsigned char dataOneByte;
+    for(int i=0;i<x;i++)
+    {
         if (fread(&dataOneByte, 1, 1, logfile1) != 1)
         {   
             printf("Could not read\n");  
@@ -196,7 +197,6 @@ void readPacket()
     int tempProtocol;  
 
     string str;                             //used for determining ethernet type[Link layer]
-
     string str2;                            //used for determining protocol[transport layer] 
                               
     bool flag = false;
@@ -232,7 +232,6 @@ void readPacket()
                 
                 flag = true;
             }
-            
             else if(str2=="UDP")
             {
               
@@ -247,8 +246,6 @@ void readPacket()
                 flag = false;
             }  
         
-        
-
         }
         else if(str=="ARP")
         {
@@ -258,13 +255,43 @@ void readPacket()
             flag = true;
         
         }
+        else if(str=="IPV6")
+        {
+            readIPv6Header(IPv6Hdr[numberOfPackets-1]);
+            tempProtocol= (int)IPv6Hdr[numberOfPackets-1].nextHeader;
+            flag=true;
+            str2 = transportLayerProtocol(tempProtocol);    
+            
+            if(str2=="TCP")
+            {
+                tcpPacket[tcpPacketNumber] = numberOfPackets-1;
+                readTcpHeader(tcpHdr[numberOfPackets-1]); 
+                z =  74;                    //ip header+ethernet heaeder+ tcp header
+                tcpPacketNumber++;
+                
+                flag = true;
+            }
+            else if(str2=="UDP")
+            {
+                readUdpHeader(udpHeader[numberOfPackets-1]);
+                z = 62;                 //ip header+ethernet heaeder+ udp header
+                flag = true;   
+            }
+            else
+            {
+                //OLHAR ESSA PORRA
+                skipPacket(data_size-34);  //if packet can not recognizable[transport layer] then skipping the packet
+                flag = false;
+            }
+        }
         else
         {
+            //OLHAR ESSA PORRA QUI TMB
             skipPacket(data_size-14);   //if packet can not recognizable[link layer] then skipping the packet
             flag = false;
         }
 
-        dataPayload[numberOfPackets-1] = data_size;        
+        dataPayload[numberOfPackets-1] = data_size;
         
         if(flag) readDataDump(numberOfPackets-1,z);
         numberOfPackets++;
@@ -361,7 +388,6 @@ void giveOption()
             if(option==1)
             {
                 cout<<COLOR_RESET;  
-                printToConsole();
                 printBasic(1,numberOfPackets-1);
                 cout<<COLOR_YELLOW ;
                 printf("\n\n");
@@ -378,7 +404,6 @@ void giveOption()
                 else
                 {
                     cout<<COLOR_RESET;
-                    printToConsole();
                     printBasic(p,p);
                     cout<<COLOR_YELLOW ;
                     printf("\n\n");    
@@ -400,7 +425,6 @@ void giveOption()
                 else 
                 {
                     cout<<COLOR_RESET;
-                    printToConsole();
                     printBasic(p,q);
                     cout<<COLOR_YELLOW ;
                     
@@ -487,7 +511,6 @@ void callReadFile(const char fileName[],bool flag)
 
         if(flag)
         {
-            printToConsole();
             printBasic(1,numberOfPackets-1);  
         } 
         giveOption();

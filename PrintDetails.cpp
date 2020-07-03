@@ -42,6 +42,48 @@ void printIPHeader(IPHeader IPHdr)
 
 }
 
+void printIPv6Header(IPv6Header IPv6Hdr)
+{
+    unsigned char s[2];
+    unsigned int num;
+    
+    unsigned int mascara = 15;
+    unsigned int trafficClass;
+    unsigned int flowLabel1;
+    unsigned int flowLabel2;
+    unsigned int flowLabel3;
+
+    trafficClass = IPv6Hdr.trafficClass[0]&mascara;   
+    flowLabel1 = IPv6Hdr.trafficClass[1]&mascara;     
+    flowLabel2 = IPv6Hdr.trafficClass[2];             
+    flowLabel3 = IPv6Hdr.trafficClass[3];             
+
+    printf( "\nIP Header:\n");
+    printf("\t-->Traffic Class                  : %d\n",trafficClass);
+    
+    printf("\t-->Flow Label                     : ");
+    cout<<int_to_hex((int)flowLabel1)<<""<<int_to_hex((int)flowLabel2)<<""<<int_to_hex((int)flowLabel3);
+
+    s[0] = (unsigned char)IPv6Hdr.payloadLenght[1];
+    s[1] = (unsigned char)IPv6Hdr.payloadLenght[0];
+    memcpy(&num, s, 4);
+    printf( "\n\t-->Payload Length                 : %u\n",(unsigned short int)num);
+    printf( "\t-->Hop Limit                      : %d\n",IPv6Hdr.hopLimit);
+    int tempProtocol= (int)IPv6Hdr.nextHeader;
+    string str = transportLayerProtocol(tempProtocol);
+    
+    printf( "\t-->Next Header                    : ");
+    cout<<str;
+    printf(" --> (%d)\n",tempProtocol);
+    printf( "\t-->Source IP                      : ");
+    cout<<int_to_hex((int)IPv6Hdr.sourceIpAddr[0])<<""<<int_to_hex((int)IPv6Hdr.sourceIpAddr[1])<<"."<<int_to_hex((int)IPv6Hdr.sourceIpAddr[2])<<""<<int_to_hex((int)IPv6Hdr.sourceIpAddr[3])<<"."<<int_to_hex((int)IPv6Hdr.sourceIpAddr[4])<<""<<int_to_hex((int)IPv6Hdr.sourceIpAddr[5])<<"."<<int_to_hex((int)IPv6Hdr.sourceIpAddr[6])<<""<<int_to_hex((int)IPv6Hdr.sourceIpAddr[7])<<"."<<int_to_hex((int)IPv6Hdr.sourceIpAddr[8])<<""<<int_to_hex((int)IPv6Hdr.sourceIpAddr[9])<<"."<<int_to_hex((int)IPv6Hdr.sourceIpAddr[10])<<""<<int_to_hex((int)IPv6Hdr.sourceIpAddr[11])<<"."<<int_to_hex((int)IPv6Hdr.sourceIpAddr[12])<<""<<int_to_hex((int)IPv6Hdr.sourceIpAddr[13])<<"."<<int_to_hex((int)IPv6Hdr.sourceIpAddr[14])<<""<<int_to_hex((int)IPv6Hdr.sourceIpAddr[15]);
+            	
+    printf( "\n\t-->Destination IP                 : ");
+    cout<<int_to_hex((int)IPv6Hdr.destIpAddr[0])<<""<<int_to_hex((int)IPv6Hdr.destIpAddr[1])<<"."<<int_to_hex((int)IPv6Hdr.destIpAddr[2])<<""<<int_to_hex((int)IPv6Hdr.destIpAddr[3])<<"."<<int_to_hex((int)IPv6Hdr.destIpAddr[4])<<""<<int_to_hex((int)IPv6Hdr.destIpAddr[5])<<"."<<int_to_hex((int)IPv6Hdr.destIpAddr[6])<<""<<int_to_hex((int)IPv6Hdr.destIpAddr[7])<<"."<<int_to_hex((int)IPv6Hdr.destIpAddr[8])<<""<<int_to_hex((int)IPv6Hdr.destIpAddr[9])<<"."<<int_to_hex((int)IPv6Hdr.destIpAddr[10])<<""<<int_to_hex((int)IPv6Hdr.destIpAddr[11])<<"."<<int_to_hex((int)IPv6Hdr.destIpAddr[12])<<""<<int_to_hex((int)IPv6Hdr.destIpAddr[13])<<"."<<int_to_hex((int)IPv6Hdr.destIpAddr[14])<<""<<int_to_hex((int)IPv6Hdr.destIpAddr[15]);
+    printf( "\n");
+
+}
+
 
 
 void printFlag(int x, int y)
@@ -346,6 +388,37 @@ void printDetails(int x, int y)
             z= 42;
             flag = true;
         
+        }
+        else if(str=="IPV6")
+        {
+         
+            printEthernetHeader(ethrHdr[i]);
+            printIPv6Header(IPv6Hdr[i]);
+            tempProtocol= (int)IPv6Hdr[i].nextHeader;   
+            
+            str2 = transportLayerProtocol(tempProtocol);    ///determinig transport layer protocol
+            
+            if(str2=="TCP")
+            {
+                
+                printTCPHeader(tcpHdr[i]); 
+                z=  54; //PENDENTE AQUI CARAI
+                flag = true;
+            }
+            
+            else if(str2=="UDP")
+            {
+              
+               printUDPHeader(udpHeader[i]);
+                z = 62;
+                flag = true; 
+            }    
+            else
+            {
+                printNotIndentify();
+                flag = false;
+            }
+
         }else
         {
             printEthernetHeader(ethrHdr[i]);

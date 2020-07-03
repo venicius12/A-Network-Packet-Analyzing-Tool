@@ -45,6 +45,16 @@ typedef struct{
 }IPHeader;
 
 typedef struct{
+    unsigned char trafficClass[4];      ///Version and Traffic Class and Flow Label
+    unsigned char payloadLenght[2];     ///payload lenght
+    unsigned char nextHeader;           ///next header
+    unsigned char hopLimit;             ///hop limit
+    unsigned char sourceIpAddr[16];     ///source ip address
+    unsigned char destIpAddr[16];       ///destination ip address
+    
+}IPv6Header;
+
+typedef struct{
     
     unsigned char sourcePort[2];         
     unsigned char destPort[2];
@@ -85,6 +95,7 @@ globalHeader globhdr;
 packetHeader pckHdr;
 ethernetHeader ethrHdr[10000];
 IPHeader IPHdr[10000];
+IPv6Header IPv6Hdr[10000];
 TCPHeader tcpHdr[10000];
 ARP arphdr[10000];
 UDPHeader udpHeader[10000];

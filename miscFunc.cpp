@@ -76,9 +76,12 @@ bool isTransportLayerProtocolinScope(int temp)
 }
 
 
-void printToConsole()
+void printToConsole(int cabe)  // 1-IPv4  2-IPv6
 {
-    printf("Packet No\tProtocol\tSource Address\t\tDestination Address\t\tPacket Size\n"); 
+    if(cabe==1)
+        printf("Packet No\tProtocol\tSource Address\t\tDestination Address\t\tPacket Size\n"); 
+    if(cabe==2)
+        printf("Packet No\tProtocol\tSource Address\t\t\t\t\ttDestination Address\t\t\t\t\tPacket Size\n");  
 }
 
 string applicationLayerProrocol(unsigned short int temp)    //return application layer protocol decided by the port numbers of transport layer

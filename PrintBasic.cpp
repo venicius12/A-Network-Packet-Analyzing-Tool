@@ -63,6 +63,7 @@ void printBasicWhileCapturing(unsigned char buffer[],long long int packetNumber,
 
 	else if(str=="IPV6")
 	{
+		printf("IPV6 \n");
 		cout<<COLOR_CYAN<<"IPV6"<<COLOR_RESET<<"\n";
 	}
 
@@ -72,6 +73,15 @@ void printBasicWhileCapturing(unsigned char buffer[],long long int packetNumber,
 	}
 }
 
+template< typename T >
+std::string int_to_hex( T i )
+{
+	std::stringstream stream;
+	stream //<< "0x" 
+			<< std::setfill ('0') << std::setw(2) 
+			<< std::hex << i;
+	return stream.str();
+}
 
 void printBasic(int x,int y)
 {
@@ -95,6 +105,7 @@ void printBasic(int x,int y)
 		if(str=="IPV4")
 		{
 		
+			printToConsole(1);
 			tempProtocol= (int)IPHdr[i].protocol;
             
             str2 = transportLayerProtocol(tempProtocol);
@@ -129,7 +140,7 @@ void printBasic(int x,int y)
 	
 		else if(str=="ARP")
 		{
-			
+			printToConsole(1);
 			cout<<COLOR_CYAN<<" "<<i+1<<"\t\t"<<"ARP"<<"\t\t";
 			printEthernetAddress(ethrHdr[i].ethSrc);
 			cout<<"\t";
@@ -139,7 +150,23 @@ void printBasic(int x,int y)
 
 		else if(str=="IPV6")
 		{
-			cout<<COLOR_CYAN<<"IPV6"<<COLOR_RESET<<"\n";
+			printToConsole(2);
+			//cout<<COLOR_CYAN<<"IPV6"<<COLOR_RESET<<"\n";
+			
+			tempProtocol= (int)IPv6Hdr[i].nextHeader;
+            
+            str2 = transportLayerProtocol(tempProtocol);
+		
+			if(str2 == "TCP")
+			{				
+				cout<<COLOR_CYAN<<" "<<i+1<<"\t\t"<<"TCP"<<"\t\t"<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[0])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[1])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[2])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[3])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[4])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[5])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[6])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[7])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[8])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[9])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[10])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[11])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[12])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[13])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[14])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[15])
+            	<<"\t\t"<<int_to_hex((int)IPv6Hdr[i].destIpAddr[0])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[1])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[2])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[3])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[4])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[5])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[6])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[7])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[8])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[9])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[10])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[11])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[12])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[13])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[14])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[15])<<"\t\t\t"<<dataPayload[i]<<COLOR_RESET<<"\n";
+			}
+			else if(str2 == "UDP")
+			{
+				cout<<COLOR_CYAN<<" "<<i+1<<"\t\t"<<"UDP"<<"\t\t"<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[0])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[1])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[2])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[3])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[4])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[5])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[6])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[7])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[8])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[9])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[10])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[11])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[12])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[13])<<"."<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[14])<<""<<int_to_hex((int)IPv6Hdr[i].sourceIpAddr[15])
+            	<<"\t\t"<<int_to_hex((int)IPv6Hdr[i].destIpAddr[0])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[1])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[2])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[3])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[4])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[5])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[6])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[7])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[8])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[9])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[10])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[11])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[12])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[13])<<"."<<int_to_hex((int)IPv6Hdr[i].destIpAddr[14])<<""<<int_to_hex((int)IPv6Hdr[i].destIpAddr[15])<<"\t\t\t"<<dataPayload[i]<<COLOR_RESET<<"\n";
+			}
 		}
 
 		else if(str=="Others")
@@ -148,5 +175,6 @@ void printBasic(int x,int y)
 		}
 
 	}
+
 
 }

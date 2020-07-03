@@ -80,7 +80,6 @@ void searchByText(char txtForSearch[],int numbersOfPackets)
 {
 	int i=0;
 	bool isfound = false;
-	printToConsole();
 	while(i<numbersOfPackets)
 	{
 		
@@ -128,14 +127,12 @@ void searchByIP(char ipForSearch[],int numbersOfPackets)
 
 	int i=0;
 	bool isfound = false ;
-	printToConsole();
 	while(i<numbersOfPackets)
 	{
 		
 		if(isMatchSearchingIP(ip,sourceIpAddress[i],destinationIpAddress[i]))
 		{
 			printf("Packet Basic:\n");
-			printToConsole();
 			printBasic(i+1,i+1); //it takes 1st parameter as a packet number, but here i pass indecies , so +1,
 			printf("Packet Details:\n");
 			cout<<COLOR_GREEN;

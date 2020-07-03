@@ -43,7 +43,7 @@ Here is the user manual.
     2. It can handle this protocols:
         
         Data Link Layer:	Ethernet
-        Network Layer:	    IPV4,ARP,IPV6                   [It can identify all the protocols given here but it can only give information of IPV4 and ARP protocol]
+        Network Layer:	    IPV4,ARP,IPV6                   [it can only give information of IPV4 and ARP protocol]
         Transport Layer:	TCP,UDP,ICMP,IGMP               [It can identify all the protocols given here but it can only give information of TCP and UDP protocol]
         Application Layer:	HTTPS,HTTP,DNS,FTPSSH,TELNET    
 									

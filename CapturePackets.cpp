@@ -97,7 +97,7 @@ void capturePacket(long long int &numbersOfPacket)
     
     saddr_size = sizeof(saddr);
     
-    printToConsole();                       //miscFuntion.cpp
+    printToConsole(1);                       //miscFuntion.cpp
     
     while(packetNumber <= numbersOfPacket)
     {        
